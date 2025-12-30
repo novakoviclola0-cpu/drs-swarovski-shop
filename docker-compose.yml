@@ -1,0 +1,30 @@
+services:
+
+  spletni-streznik:
+    build:
+      context: .
+      dockerfile_inline: |
+          FROM php:apache
+          RUN docker-php-ext-install pdo pdo_mysql 
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8880:80"
+    volumes:
+      - ./data/www:/var/www/html/
+
+  mysql:
+    hostname: podatkovna-baza
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+     - MYSQL_ROOT_PASSWORD=superVarnoGeslo
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9000:80"
+    environment:
+      PMA_HOST: podatkovna-baza

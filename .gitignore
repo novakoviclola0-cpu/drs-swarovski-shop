@@ -1,0 +1,16 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Docker / local data
+data/mysql/
+data/www/uploads/
+data/www/images/uploads/
+
+# Logs / temp
+*.log
+
+# Environment secrets
+.env

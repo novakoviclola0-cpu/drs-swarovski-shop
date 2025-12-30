@@ -1,0 +1,1272 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f7f6f4;
+    color: #111111;
+}
+
+/* General links */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===========================
+   HEADER
+   =========================== */
+
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+/* dekorativni div – skrit */
+.pink-bg {
+    display: none;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-title {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: 22px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #111111;
+}
+
+/* RIGHT MENU */
+.right-menu {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.right-menu a {
+    font-size: 12px;
+    font-family: inherit;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #333333;
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.right-menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 1px;
+    background: #111111;
+    transition: width 0.2s ease;
+}
+
+.right-menu a:hover::after {
+    width: 100%;
+}
+
+/* logout “pill” dugme */
+.logout-btn {
+    border: 1px solid #111111;
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+}
+
+.logout-btn:hover {
+    background: #111111;
+    color: #ffffff;
+}
+
+/* ===========================
+   CATEGORY BAR
+   =========================== */
+
+.category-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 18px 32px 12px;
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #e5e5e5;
+    background: #ffffff;
+}
+
+.category-bar a {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #777777;
+    padding-bottom: 4px;
+}
+
+.category-bar a.active-cat {
+    color: #111111;
+    border-bottom: 1px solid #111111;
+}
+
+/* ===========================
+   TITLE SECTION
+   =========================== */
+
+.best-title {
+    max-width: 1200px;
+    margin: 28px auto 8px;
+    padding: 0 32px;
+}
+
+.best-title h2 {
+    font-size: 26px;
+    font-family: "Playfair Display", serif;
+    color: #111111;
+    margin: 0;
+}
+
+/* ===========================
+   PRODUCTS TOOLBAR – search + sort
+   =========================== */
+
+.products-toolbar {
+    max-width: 1200px;
+    margin: 8px auto 8px;
+    padding: 0 32px;
+}
+
+.toolbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.results-count {
+    font-size: 13px;
+    color: #777777;
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-wrapper input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #d5d5d5;
+    font-size: 13px;
+    min-width: 180px;
+    background: #fafafa;
+}
+
+.search-wrapper input[type="text"]:focus {
+    outline: none;
+    border-color: #111111;
+    background: #ffffff;
+}
+
+.sort-wrapper select {
+    padding: 8px 36px 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #d5d5d5;
+    font-size: 13px;
+    background: #fafafa;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.sort-wrapper {
+    position: relative;
+}
+
+.sort-wrapper::after {
+    content: "▾";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    pointer-events: none;
+    color: #777777;
+}
+
+.btn-apply {
+    border-radius: 999px;
+    border: 1px solid #111111;
+    background: #111111;
+    color: #ffffff;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.btn-apply:hover {
+    background: #ffffff;
+    color: #111111;
+}
+
+/* ===========================
+   PRODUCTS GRID
+   =========================== */
+
+.products-list {
+    padding: 32px 0 40px;
+}
+
+.product-row {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px;
+}
+
+/* SVAKA KARTICA – anchor oko .product-box */
+.product-row > a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    flex: 0 0 260px;   /* fiksna širina kartice */
+    max-width: 260px;
+}
+
+.product-box {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    min-height: 360px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.product-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    border-color: #d2d2d2;
+}
+
+.product-thumb {
+    width: 100%;
+}
+
+/* SVE SLIKE ISTE, NE ISEČENE */
+.product-thumb img,
+.product-box img {
+    width: 100%;
+    height: 260px;
+    display: block;
+    object-fit: contain;          /* ništa se ne seče, sve se vidi */
+    object-position: center;
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.product-info h3 {
+    margin: 4px 0 2px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #222222;
+}
+
+.price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111111;
+}
+
+.no-products {
+    font-size: 14px;
+    color: #777777;
+}
+
+/* ===========================
+   PAGINATION
+   =========================== */
+
+.pagination {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    padding: 0 32px;
+    text-align: center;
+}
+
+.page-btn {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 999px;
+    border: 1px solid #111111;
+    padding: 8px 18px;
+    margin: 0 6px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #111111;
+    background: #ffffff;
+}
+
+.page-btn:hover {
+    background: #111111;
+    color: #ffffff;
+}
+
+.current-page {
+    font-size: 13px;
+    margin: 0 10px;
+    color: #555555;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+
+.footer-bg {
+    background: #111111;
+    height: 80px;
+}
+
+/* ===========================
+   FORME (login / register)
+   =========================== */
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    margin: 60px 0;
+}
+
+.form-box {
+    background: #ffffff;
+    padding: 40px 36px;
+    width: 420px;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+    text-align: left;
+}
+
+.form-box h2 {
+    font-family: "Playfair Display", serif;
+    color: #111111;
+    font-size: 26px;
+    margin-bottom: 14px;
+}
+
+.form-box p {
+    font-size: 13px;
+    color: #777777;
+}
+
+.form-box label {
+    display: block;
+    margin-top: 18px;
+    color: #333333;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.form-box input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    margin-top: 6px;
+    font-size: 14px;
+    background: #fafafa;
+}
+
+.form-box input:focus {
+    outline: none;
+    border-color: #111111;
+    background: #ffffff;
+}
+
+.submit-btn {
+    margin-top: 24px;
+    padding: 10px 18px;
+    background: #111111;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background: #ffffff;
+    color: #111111;
+    border: 1px solid #111111;
+}
+
+.success-msg {
+    color: #339966;
+    font-weight: 500;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+/* link za registracijo/prijavo */
+.register-link {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #555555;
+}
+
+.register-link a {
+    color: #111111;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+/* ===========================
+   ABOUT PAGE
+   =========================== */
+
+.about-section {
+    display: flex;
+    justify-content: center;
+}
+
+.about-box {
+    width: 70%;
+    background: #ffffff;
+    padding: 40px 36px;
+    margin: 50px 0;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+}
+
+.about-box h2 {
+    font-family: "Playfair Display", serif;
+    color: #111111;
+    font-size: 28px;
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.about-box h3 {
+    margin-top: 24px;
+    color: #111111;
+    font-family: "Playfair Display", serif;
+    font-size: 18px;
+}
+
+.about-box p,
+.about-box li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #555555;
+}
+
+/* ===========================
+   CUSTOM ALERT
+   =========================== */
+
+.custom-alert {
+    width: 90%;
+    max-width: 450px;
+    margin: 12px auto 0;
+    padding: 10px 14px;
+    background: #fff3f0;
+    border-left: 4px solid #e1735b;
+    color: #b1422d;
+    font-family: inherit;
+    font-size: 13px;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    opacity: 1;
+    transition: opacity 0.6s ease;
+    text-align: left;
+}
+
+.custom-alert.hide {
+    opacity: 0;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width: 768px) {
+    .header-content {
+        padding: 12px 16px;
+    }
+
+    .category-bar {
+        padding: 12px 16px;
+        gap: 12px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .best-title,
+    .products-toolbar,
+    .product-row,
+    .pagination {
+        padding: 0 16px;
+    }
+
+    .toolbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-form {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .about-box {
+        width: 90%;
+        padding: 28px 20px;
+    }
+
+    /* kartice na mobitelu – jedna u redu */
+    .product-row > a {
+        flex: 1 1 100%;
+        max-width: 360px;
+    }
+}
+
+/* =========================
+   STRAN IZDELKA (izdelek.php)
+   ========================= */
+
+.product-page {
+    max-width: 1200px;
+    margin: 40px auto 60px;
+    padding: 0 24px;
+}
+
+/* slika levo, tekst desno */
+.product-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* LEVO: slika izdelka */
+.product-image-large {
+    flex: 1;
+    max-width: 520px;
+}
+
+.product-image-large img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #eee;
+}
+
+/* DESNO: podrobnosti */
+.product-info-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 8px;
+}
+
+/* glavni opis takoj pod imenom */
+.product-main-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #444;
+    margin: 0 0 10px;
+}
+
+.product-price-large {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0 0 10px;
+}
+
+/* lista podrobnosti (material, tip ...) */
+.product-details-list {
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+.detail-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.detail-label {
+    min-width: 80px;
+    color: #777;
+    font-weight: 500;
+}
+
+.detail-value {
+    color: #333;
+}
+
+/* gumb "Dodaj v košarico" */
+.add-to-cart-btn {
+    margin-top: 18px;
+    padding: 11px 18px;
+    background: #111;
+    color: #fff;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.add-to-cart-btn:hover {
+    background: #333;
+}
+
+/* KOMENTARJI */
+
+.comments-section {
+    margin-top: 50px;
+}
+
+.comments-section h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.comment-form {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comment-form textarea {
+    font-size: 14px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #d4d0c8;
+    min-height: 90px;
+    resize: vertical;
+}
+
+.comment-form button {
+    width: 180px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+/* lepo vidna škatlica za neprijavljenega */
+.login-to-comment-box {
+    margin-top: 18px;
+    padding: 14px 16px;
+    max-width: 420px;
+    background: #fdf7f0;
+    border: 1px solid #e6d7c3;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.btn-primary {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 12px;
+}
+
+.btn-primary:hover {
+    background: #fff;
+    color: #111;
+}
+
+/* kartice komentarjev */
+.comments-list {
+    margin-top: 18px;
+}
+
+.comment-card {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.comment-rating {
+    font-size: 16px;
+    color: #e2b007;
+}
+
+.comment-text {
+    font-size: 14px;
+    margin: 4px 0;
+}
+
+.comment-date {
+    font-size: 11px;
+    color: #888;
+}
+
+.error-msg {
+    color: #b3261e;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* ZVEZDICE ZA OCENO – 5 zvezdica koje se boje */
+
+.rating-stars-js {
+    display: inline-flex;
+    gap: 4px;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.rating-stars-js span {
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s ease;
+}
+
+.rating-stars-js span.active,
+.rating-stars-js span.selected {
+    color: #e2b007;
+}
+
+/* =========================
+   DARK THEME
+   ========================= */
+
+body.dark-theme {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .main-header {
+    background: #2a2a2a;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .category-bar {
+    background: #2a2a2a;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .product-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .product-box h3,
+body.dark-theme .product-box .price {
+    color: #e0e0e0;
+}
+
+body.dark-theme .logo-title,
+body.dark-theme .best-title h2 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .right-menu a {
+    color: #d0d0d0;
+}
+
+body.dark-theme .category-bar a {
+    color: #b0b0b0;
+}
+
+body.dark-theme .category-bar a.active-cat {
+    color: #e0e0e0;
+    border-bottom-color: #e0e0e0;
+}
+
+body.dark-theme .form-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .form-box h2,
+body.dark-theme .form-box label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .form-box input,
+body.dark-theme .form-box select,
+body.dark-theme .form-box textarea {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-table th {
+    background: #2a2a2a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-table td {
+    color: #d0d0d0;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .admin-page,
+body.dark-theme .admin-table,
+body.dark-theme .chart-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .admin-table th {
+    background: #1a1a1a;
+}
+
+body.dark-theme .product-page,
+body.dark-theme .product-info-block,
+body.dark-theme .comment-card {
+    color: #e0e0e0;
+}
+
+body.dark-theme .comment-card {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .about-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-page,
+body.dark-theme .racun-page,
+body.dark-theme .racun-box {
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-title,
+body.dark-theme .racun-header h1,
+body.dark-theme .racun-header h2 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .discount-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .discount-box input[type="text"] {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-empty {
+    color: #b0b0b0;
+}
+
+body.dark-theme .racun-items table th {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .racun-items table td {
+    border-color: #3a3a3a;
+    color: #d0d0d0;
+}
+
+body.dark-theme .racun-qr {
+    background: #1a1a1a;
+}
+
+body.dark-theme .product-title,
+body.dark-theme .product-price-large,
+body.dark-theme .product-main-description,
+body.dark-theme .detail-value {
+    color: #e0e0e0;
+}
+
+body.dark-theme .detail-label {
+    color: #b0b0b0;
+}
+
+body.dark-theme .reviews-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .reviews-cta {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .review-form-wrapper {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .review-form-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .comment-form textarea {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .stats-table th {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .stats-table td {
+    color: #d0d0d0;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .stats-table tr:hover {
+    background: #1a1a1a;
+}
+
+/* RESPONSIVE – izdelek stran */
+@media (max-width: 768px) {
+    .product-container {
+        flex-direction: column;
+    }
+
+    .product-image-large {
+        max-width: 100%;
+    }
+
+    .product-image-large img {
+        height: 360px;
+    }
+}
+
+
+/* ===== RECENZIJE – CTA + naslov ===== */
+
+.reviews-section {
+    margin-top: 40px;
+}
+
+.reviews-title {
+    font-size: 22px;
+    margin: 0 0 12px;
+    font-family: "Playfair Display", serif;
+    color: #111111;
+}
+
+.reviews-cta {
+    margin: 10px 0 24px;
+    padding: 16px 18px;
+    max-width: 520px;
+    background: #fff3f0;
+    border: 1px solid #e2b2a0;
+    border-radius: 10px;
+}
+
+.reviews-cta-text {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: #55352a;
+}
+
+.btn-primary-large {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 1px solid #111;
+    background: #111;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+}
+
+.btn-primary-large:hover {
+    background: #fff;
+    color: #111;
+}
+
+/* okvir okoli forme za recenzijo */
+.review-form-wrapper {
+    max-width: 520px;
+    margin-top: 10px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+}
+
+.review-form-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 8px;
+}
+
+/* ZVEZDICE ZA OCENO – 5 klikabilnih */
+
+.rating-stars-js {
+    display: inline-flex;
+    gap: 4px;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.rating-stars-js span {
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.15s ease;
+}
+
+.rating-stars-js span.active,
+.rating-stars-js span.selected {
+    color: #e2b007;
+}
+
+/* =========================
+   DARK THEME
+   ========================= */
+
+body.dark-theme {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .main-header {
+    background: #2a2a2a;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .category-bar {
+    background: #2a2a2a;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .product-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .product-box h3,
+body.dark-theme .product-box .price {
+    color: #e0e0e0;
+}
+
+body.dark-theme .logo-title,
+body.dark-theme .best-title h2 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .right-menu a {
+    color: #d0d0d0;
+}
+
+body.dark-theme .category-bar a {
+    color: #b0b0b0;
+}
+
+body.dark-theme .category-bar a.active-cat {
+    color: #e0e0e0;
+    border-bottom-color: #e0e0e0;
+}
+
+body.dark-theme .form-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .form-box h2,
+body.dark-theme .form-box label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .form-box input,
+body.dark-theme .form-box select,
+body.dark-theme .form-box textarea {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-table th {
+    background: #2a2a2a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-table td {
+    color: #d0d0d0;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .admin-page,
+body.dark-theme .admin-table,
+body.dark-theme .chart-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .admin-table th {
+    background: #1a1a1a;
+}
+
+body.dark-theme .product-page,
+body.dark-theme .product-info-block,
+body.dark-theme .comment-card {
+    color: #e0e0e0;
+}
+
+body.dark-theme .comment-card {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .about-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-page,
+body.dark-theme .racun-page,
+body.dark-theme .racun-box {
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-title,
+body.dark-theme .racun-header h1,
+body.dark-theme .racun-header h2 {
+    color: #e0e0e0;
+}
+
+body.dark-theme .discount-box {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .discount-box input[type="text"] {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .cart-empty {
+    color: #b0b0b0;
+}
+
+body.dark-theme .racun-items table th {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .racun-items table td {
+    border-color: #3a3a3a;
+    color: #d0d0d0;
+}
+
+body.dark-theme .racun-qr {
+    background: #1a1a1a;
+}
+
+body.dark-theme .product-title,
+body.dark-theme .product-price-large,
+body.dark-theme .product-main-description,
+body.dark-theme .detail-value {
+    color: #e0e0e0;
+}
+
+body.dark-theme .detail-label {
+    color: #b0b0b0;
+}
+
+body.dark-theme .reviews-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .reviews-cta {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .review-form-wrapper {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .review-form-title {
+    color: #e0e0e0;
+}
+
+body.dark-theme .comment-form textarea {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .stats-table th {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .stats-table td {
+    color: #d0d0d0;
+    border-bottom-color: #3a3a3a;
+}
+
+body.dark-theme .stats-table tr:hover {
+    background: #1a1a1a;
+}
