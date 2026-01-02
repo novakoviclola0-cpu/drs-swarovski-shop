@@ -192,6 +192,10 @@ if ($sort !== '')   $query_extra .= '&sort=' . urlencode($sort);
                 <a href="admin_statistika.php">Statistika</a>
                 <a href="admin_dodaj_izdelek.php">Dodaj izdelek</a>
             <?php endif; ?>
+            <?php if (isset($_SESSION['email']) && $_SESSION['email'] === 'admin@gmail.com'): ?>
+    <a href="admin_uporabniki.php">Uporabniki</a>
+<?php endif; ?>
+
 
             <?php if (!isset($_SESSION['user_id'])): ?>
                 <a href="login.php">Prijava</a>
