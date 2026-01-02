@@ -3,6 +3,27 @@ session_start();
 require __DIR__ . '/db.php';
 require __DIR__ . '/cart_functions.php';
 
+// Dohvaćanje trenutnog vremena preko zunaneg API-ja (worldtimeapi.org)
+$apiUrl = 'http://worldtimeapi.org/api/timezone/Europe/Ljubljana';
+
+$response = @file_get_contents($apiUrl);
+if ($response !== false) {
+    $data = json_decode($response, true);
+    if (isset($data['datetime'])) {
+        $apiDateTime = new DateTime($data['datetime']);
+        $formattedDateTime = $apiDateTime->format('d.m.Y H:i');
+    } else {
+        // Fallback ako API ne vrati datetime
+        $formattedDateTime = date('d.m.Y H:i');
+    }
+} else {
+    // Fallback ako API nije dostupan
+    $formattedDateTime = date('d.m.Y H:i');
+}
+
+// Datum kraja akcije
+$actionEndDate = '31.03.2026';
+
 // inicializiramo košarico v seji
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];  // [izdelek_id => količina]
@@ -368,6 +389,21 @@ if ($discountPercent > 0 && $total > 0) {
             font-weight: 700;
             margin-top: 6px;
         }
+
+                .current-time {
+            text-align: right;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .action-info {
+            font-size: 13px;
+            color: #b3261e;
+            font-weight: 600;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -402,6 +438,11 @@ if ($discountPercent > 0 && $total > 0) {
 
 <main class="cart-page">
     <h2 class="cart-title">Košarica</h2>
+
+        <!-- Trenutno vreme preko zunaneg API-ja -->
+    <div class="current-time">
+        danes: <?= htmlspecialchars($formattedDateTime) ?>
+    </div>
 
     <?php if (isset($_GET['success'])): ?>
         <div class="cart-success">
@@ -452,6 +493,11 @@ if ($discountPercent > 0 && $total > 0) {
                     <button type="submit" class="discount-btn">Uporabi kodo</button>
                 </div>
             </form>
+
+                        <!-- Informacija o trajanju akcije -->
+            <div class="action-info">
+                ⚡ AKCIJA: 20% popusta sa kodom AKCIJA traje do <?= htmlspecialchars($actionEndDate) ?>!
+            </div>
 
             <?php if ($discountMessage): ?>
                 <div class="discount-msg"><?= htmlspecialchars($discountMessage) ?></div>
