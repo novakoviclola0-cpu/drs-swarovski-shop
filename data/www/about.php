@@ -142,7 +142,7 @@ $cartCount = array_sum($_SESSION['cart']);
 
             <h3 style="margin: 22px 0 10px;">New York</h3>
             <img loading="lazy" decoding="async"
-                 src="https://mma.prnewswire.com/media/2296722/2023_NYFLAG_ARCHSHOT_ENTRANCE_GL_300DPI_CMYK.jpg"
+                 src="https://media.assettype.com/diamondworld%2F2024-03%2F3c8c1da0-fc04-4755-9abc-3fd6dae5aa4f%2F_1x_1.jpg?w=640&auto=format%2Ccompress"
                  alt="Swarovski lokacija – New York (1)"
                  style="width:100%; max-width:980px; height:420px; object-fit:cover; display:block; margin:12px 0; border-radius:14px; background:#f0f0f0;">
             <img loading="lazy" decoding="async"
