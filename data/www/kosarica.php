@@ -390,19 +390,85 @@ if ($discountPercent > 0 && $total > 0) {
             margin-top: 6px;
         }
 
-                .current-time {
-            text-align: right;
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 20px;
+                .time-and-action-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .current-time-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .current-time-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #888;
+            font-weight: 500;
+        }
+
+        .current-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            font-family: 'Courier New', monospace;
         }
 
         .action-info {
-            font-size: 13px;
+            font-size: 14px;
             color: #b3261e;
             font-weight: 600;
-            margin-top: 10px;
-            text-align: center;
+            padding: 12px 18px;
+            background: #fff3f0;
+            border-left: 3px solid #b3261e;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-info::before {
+            content: "⚡";
+            font-size: 18px;
+        }
+
+        body.dark-theme .time-and-action-container {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .current-time-label {
+            color: #b0b0b0;
+        }
+
+        body.dark-theme .current-time {
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .action-info {
+            background: #3a1a1a;
+            border-left-color: #ff4d4d;
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 768px) {
+            .time-and-action-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .action-info {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -442,9 +508,15 @@ if ($discountPercent > 0 && $total > 0) {
 <main class="cart-page">
     <h2 class="cart-title">Košarica</h2>
 
-        <!-- Trenutno vreme preko zunaneg API-ja -->
-    <div class="current-time">
-        danes: <?= htmlspecialchars($formattedDateTime) ?>
+    <!-- Dinamičko prikazivanje vremena i informacija o akciji -->
+    <div class="time-and-action-container">
+        <div class="current-time-wrapper">
+            <div class="current-time-label">Danes</div>
+            <div class="current-time" id="currentDateTime"><?= htmlspecialchars($formattedDateTime) ?></div>
+        </div>
+        <div class="action-info">
+            AKCIJA: 20% popusta s kodo AKCIJA traja do <?= htmlspecialchars($actionEndDate) ?>!
+        </div>
     </div>
 
     <?php if (isset($_GET['success'])): ?>
@@ -496,11 +568,6 @@ if ($discountPercent > 0 && $total > 0) {
                     <button type="submit" class="discount-btn">Uporabi kodo</button>
                 </div>
             </form>
-
-                        <!-- Informacija o trajanju akcije -->
-            <div class="action-info">
-                ⚡ AKCIJA: 20% popusta sa kodom AKCIJA traje do <?= htmlspecialchars($actionEndDate) ?>!
-            </div>
 
             <?php if ($discountMessage): ?>
                 <div class="discount-msg"><?= htmlspecialchars($discountMessage) ?></div>
@@ -557,6 +624,63 @@ if ($discountPercent > 0 && $total > 0) {
     if (theme === 'dark') {
         document.body.classList.add('dark-theme');
     }
+})();
+
+// Dinamičko ažuriranje vremena
+(function() {
+    const timeElement = document.getElementById('currentDateTime');
+    if (!timeElement) return;
+
+    // Funkcija za formatiranje datuma i vremena
+    function formatDateTime(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+    }
+
+    // Početno vreme iz API-ja (server time)
+    const serverTimeStr = timeElement.textContent.trim();
+    const [datePart, timePart] = serverTimeStr.split(' ');
+    const [day, month, year] = datePart.split('.');
+    const [hours, minutes] = timePart.split(':');
+    
+    // Kreiraj Date objekat sa server vremenom
+    let currentTime = new Date(year, month - 1, day, hours, minutes, 0);
+    
+    // Ažuriraj vreme svake sekunde
+    function updateTime() {
+        currentTime.setSeconds(currentTime.getSeconds() + 1);
+        timeElement.textContent = formatDateTime(currentTime);
+    }
+    
+    // Ažuriraj odmah
+    updateTime();
+    
+    // Ažuriraj svake sekunde
+    setInterval(updateTime, 1000);
+    
+    // Periodično sinhronizuj sa API-jem (svakih 5 minuta)
+    function syncWithAPI() {
+        fetch('https://worldtimeapi.org/api/timezone/Europe/Ljubljana')
+            .then(response => response.json())
+            .then(data => {
+                if (data.datetime) {
+                    const apiDate = new Date(data.datetime);
+                    currentTime = apiDate;
+                    timeElement.textContent = formatDateTime(currentTime);
+                }
+            })
+            .catch(error => {
+                console.error('Napaka pri sinhronizaciji z API-jem:', error);
+            });
+    }
+    
+    // Sinhronizuj sa API-jem svakih 5 minuta
+    setInterval(syncWithAPI, 5 * 60 * 1000);
 })();
 </script>
 

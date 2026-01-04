@@ -166,13 +166,10 @@ $cartCount = array_sum($_SESSION['cart']);
             <h2>Moja lokacija</h2>
             <p>Pritisnite gumb, da prikažete vašo trenutno lokacijo na zemljevidu, skupaj s Swarovski trgovinami v Sloveniji.</p>
             <button id="getLocation" class="location-btn">Dostop do lokacije</button>
-            <p class="location-note">Zahteva se pošlje samo enkrat in se uporablja samo za prikaz na zemljevidu. Swarovski trgovine so označene z rdečimi oznakami.</p>
             <div id="map" style="display: none;"></div>
         </div>
 
-        <p style="margin-top: 40px;">
-            Hvala, ker zaupate našemu kristalnemu svetu. ✨
-        </p>
+    
     </div>
 </section>
 
