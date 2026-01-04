@@ -27,13 +27,30 @@ if (!$isAdmin) {
 // AJAX brisanje korisnika
 if (isset($_POST['ajax']) && $_POST['ajax'] == '1' && isset($_POST['action']) && $_POST['action'] === 'delete_user') {
     header('Content-Type: application/json');
-    $userId = (int)$_POST['user_id'];
-    if ($userId > 0 && $userId !== $_SESSION['user_id']) {
-        $delStmt = $pdo->prepare("DELETE FROM oseba WHERE id = :id");
-        $delStmt->execute([':id' => $userId]);
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Ne morete izbrisati sebe.']);
+    try {
+        $userId = (int)($_POST['user_id'] ?? 0);
+        if ($userId > 0 && $userId !== $_SESSION['user_id']) {
+            // Najpre obriši komentarje uporabnika
+            $delComments = $pdo->prepare("DELETE FROM komentar WHERE user_id = :id");
+            $delComments->execute([':id' => $userId]);
+            
+            // Nato obriši košarico uporabnika (če obstaja tabela košarica)
+            try {
+                $delCart = $pdo->prepare("DELETE FROM kosarica WHERE user_id = :id");
+                $delCart->execute([':id' => $userId]);
+            } catch (Exception $e) {
+                // Ignoriraj, če tabela ne obstaja
+            }
+            
+            // Končno obriši uporabnika
+            $delStmt = $pdo->prepare("DELETE FROM oseba WHERE id = :id");
+            $delStmt->execute([':id' => $userId]);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Ne morete izbrisati sebe.']);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Napaka pri brisanju: ' . $e->getMessage()]);
     }
     exit;
 }
@@ -42,6 +59,19 @@ if (isset($_POST['ajax']) && $_POST['ajax'] == '1' && isset($_POST['action']) &&
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_user' && !isset($_POST['ajax'])) {
     $userId = (int)$_POST['user_id'];
     if ($userId > 0 && $userId !== $_SESSION['user_id']) {
+        // Najpre obriši komentarje uporabnika
+        $delComments = $pdo->prepare("DELETE FROM komentar WHERE user_id = :id");
+        $delComments->execute([':id' => $userId]);
+        
+        // Nato obriši košarico uporabnika (če obstaja tabela košarica)
+        try {
+            $delCart = $pdo->prepare("DELETE FROM kosarica WHERE user_id = :id");
+            $delCart->execute([':id' => $userId]);
+        } catch (Exception $e) {
+            // Ignoriraj, če tabela ne obstaja
+        }
+        
+        // Končno obriši uporabnika
         $delStmt = $pdo->prepare("DELETE FROM oseba WHERE id = :id");
         $delStmt->execute([':id' => $userId]);
     }
@@ -49,58 +79,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-// Izvoz u pravi Excel (.xlsx) – zahteva PhpSpreadsheet
+// Izvoz u Excel format (Excel XML - ne zahteva dodatne knjižnice)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'export_excel') {
-    require_once __DIR__ . '/vendor/autoload.php'; // Composer autoload
-
-    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
-
-    // Zaglavlje
-    $sheet->setCellValue('A1', 'ID');
-    $sheet->setCellValue('B1', 'Ime');
-    $sheet->setCellValue('C1', 'Priimek');
-    $sheet->setCellValue('D1', 'E-pošta');
-    $sheet->setCellValue('E1', 'Tip ID');
-
-    // Stil zaglavlja
-    $headerStyle = [
-        'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
-        'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['argb' => 'FF111111']],
-        'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
-    ];
-    $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
-
-    // Podaci
-    $stmt = $pdo->query("SELECT id, ime, priimek, e_mail, tip_id FROM oseba ORDER BY id ASC");
-    $row = 2;
-    while ($u = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $sheet->setCellValue('A' . $row, $u['id']);
-        $sheet->setCellValue('B' . $row, $u['ime'] ?? '');
-        $sheet->setCellValue('C' . $row, $u['priimek'] ?? '');
-        $sheet->setCellValue('D' . $row, $u['e_mail'] ?? '');
-        $sheet->setCellValue('E' . $row, $u['tip_id'] ?? 0);
-        $row++;
-    }
-
-    // Auto-širina kolona
-    foreach (range('A', 'E') as $col) {
-        $sheet->getColumnDimension($col)->setAutoSize(true);
-    }
-
-    $filename = "uporabniki_" . date('Y-m-d') . ".xlsx";
-
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    $filename = "uporabniki_" . date('Y-m-d') . ".xls";
+    
+    header('Content-Type: application/vnd.ms-excel; charset=utf-8');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
     header('Cache-Control: max-age=0');
-
-    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-    $writer->save('php://output');
+    
+    // Excel XML zaglavlje
+    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    echo '<?mso-application progid="Excel.Sheet"?>' . "\n";
+    echo '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+    echo ' xmlns:o="urn:schemas-microsoft-com:office:office"' . "\n";
+    echo ' xmlns:x="urn:schemas-microsoft-com:office:excel"' . "\n";
+    echo ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
+    echo ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
+    echo '<Worksheet ss:Name="Uporabniki">' . "\n";
+    echo '<Table>' . "\n";
+    
+    // Zaglavlje
+    echo '<Row>' . "\n";
+    echo '<Cell><Data ss:Type="String">ID</Data></Cell>' . "\n";
+    echo '<Cell><Data ss:Type="String">Ime</Data></Cell>' . "\n";
+    echo '<Cell><Data ss:Type="String">Priimek</Data></Cell>' . "\n";
+    echo '<Cell><Data ss:Type="String">E-pošta</Data></Cell>' . "\n";
+    echo '</Row>' . "\n";
+    
+    // Podatki
+    $stmt = $pdo->query("SELECT id, ime, priimek, e_mail FROM oseba ORDER BY id ASC");
+    while ($u = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        echo '<Row>' . "\n";
+        echo '<Cell><Data ss:Type="Number">' . (int)$u['id'] . '</Data></Cell>' . "\n";
+        echo '<Cell><Data ss:Type="String">' . htmlspecialchars($u['ime'] ?? '') . '</Data></Cell>' . "\n";
+        echo '<Cell><Data ss:Type="String">' . htmlspecialchars($u['priimek'] ?? '') . '</Data></Cell>' . "\n";
+        echo '<Cell><Data ss:Type="String">' . htmlspecialchars($u['e_mail'] ?? '') . '</Data></Cell>' . "\n";
+        echo '</Row>' . "\n";
+    }
+    
+    echo '</Table>' . "\n";
+    echo '</Worksheet>' . "\n";
+    echo '</Workbook>' . "\n";
     exit;
 }
 
 // Pridobimo vse uporabnike
-$usersStmt = $pdo->query("SELECT id, ime, priimek, e_mail, tip_id FROM oseba ORDER BY id ASC");
+$usersStmt = $pdo->query("SELECT id, ime, priimek, e_mail FROM oseba ORDER BY id ASC");
 $users = $usersStmt->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -207,8 +231,6 @@ $users = $usersStmt->fetchAll();
 <main class="admin-page">
     <h2>Upravljanje uporabnikov</h2>
     <p class="admin-note">
-        Tukaj lahko vidite seznam vseh registriranih uporabnikov in jih izbrišete (razen sebe). 
-        Tip ID: 1 = Admin, 2 = Navadni uporabnik.
     </p>
 
     <table class="admin-table">
@@ -218,7 +240,6 @@ $users = $usersStmt->fetchAll();
                 <th>Ime</th>
                 <th>Priimek</th>
                 <th>E-pošta</th>
-                <th>Tip ID</th>
                 <th>Akcija</th>
             </tr>
         </thead>
@@ -229,7 +250,6 @@ $users = $usersStmt->fetchAll();
                     <td><?= htmlspecialchars($u['ime'] ?? '') ?></td>
                     <td><?= htmlspecialchars($u['priimek'] ?? '') ?></td>
                     <td><?= htmlspecialchars($u['e_mail'] ?? '') ?></td>
-                    <td><?= (int)($u['tip_id'] ?? 0) ?></td>
                     <td>
                         <?php if ($u['id'] !== $_SESSION['user_id']): ?>
                             <button type="button" class="delete-btn" onclick="deleteUser(<?= $u['id'] ?>, this)">
@@ -247,7 +267,7 @@ $users = $usersStmt->fetchAll();
     <div class="export-form">
         <form method="POST">
             <input type="hidden" name="action" value="export_excel">
-            <button type="submit" class="export-btn">Izvozi u Excel (.xlsx)</button>
+            <button type="submit" class="export-btn">Izvozi v Excel</button>
         </form>
     </div>
 </main>
@@ -265,7 +285,12 @@ function deleteUser(userId, button) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'action=delete_user&user_id=' + userId + '&ajax=1'
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             button.closest('tr').remove();
@@ -273,7 +298,10 @@ function deleteUser(userId, button) {
             alert(data.message || 'Napaka pri brisanju.');
         }
     })
-    .catch(() => alert('Napaka pri komunikaciji s strežnikom.'));
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Napaka pri komunikaciji s strežnikom: ' + error.message);
+    });
 }
 </script>
 
