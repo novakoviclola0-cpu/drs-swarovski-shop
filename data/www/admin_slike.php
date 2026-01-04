@@ -230,7 +230,7 @@ $izdelki = $stmt->fetchAll();
                     <td><?= htmlspecialchars($iz['ime']) ?></td>
                     <td>
                         <div class="admin-thumb">
-                            <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="">
+                            <img src="<?= htmlspecialchars($thumbSrc) ?>" alt="" loading="lazy" decoding="async">
                         </div>
                     </td>
                     <td>

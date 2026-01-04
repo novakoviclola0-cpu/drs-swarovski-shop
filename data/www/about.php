@@ -94,6 +94,9 @@ $cartCount = array_sum($_SESSION['cart']);
 
             <?php if (isset($_SESSION['email']) && $_SESSION['email'] === 'admin@gmail.com'): ?>
                 <a href="admin_slike.php">Urejanje slik</a>
+                <a href="admin_statistika.php">Statistika</a>
+                <a href="admin_dodaj_izdelek.php">Dodaj izdelek</a>
+                <a href="admin_uporabniki.php">Uporabniki</a>
             <?php endif; ?>
 
             <?php if (!isset($_SESSION['user_id'])): ?>
@@ -161,9 +164,9 @@ $cartCount = array_sum($_SESSION['cart']);
         <!-- Sekcija Moja lokacija – sada unutar about-box -->
         <div class="location-section">
             <h2>Moja lokacija</h2>
-            <p>Pritisnite gumb da prikažete vašu trenutnu lokacijo na mapi, zajedno sa Swarovski prodavnicama u Sloveniji.</p>
-            <button id="getLocation" class="location-btn">Pristup lokaciji</button>
-            <p class="location-note">Zahteva se pošlje samo jednom i koristi se samo za prikaz na mapi. Swarovski prodavnice su označene crvenim markerima.</p>
+            <p>Pritisnite gumb, da prikažete vašo trenutno lokacijo na zemljevidu, skupaj s Swarovski trgovinami v Sloveniji.</p>
+            <button id="getLocation" class="location-btn">Dostop do lokacije</button>
+            <p class="location-note">Zahteva se pošlje samo enkrat in se uporablja samo za prikaz na zemljevidu. Swarovski trgovine so označene z rdečimi oznakami.</p>
             <div id="map" style="display: none;"></div>
         </div>
 
@@ -221,7 +224,7 @@ function showPosition(position) {
         shadowSize: [41, 41]
     });
 
-    // Lista Swarovski prodavnica u Sloveniji sa koordinatama i adresama
+    // Seznam Swarovski trgovin v Sloveniji s koordinatami in naslovi
     const stores = [
         {lat: 46.06796, lon: 14.54219, address: 'Citypark, Šmartinska c. 152g, 1000 Ljubljana'},
         {lat: 46.05256, lon: 14.50383, address: 'Hotel Slon, Slovenska cesta 34, 1000 Ljubljana'},
@@ -237,7 +240,7 @@ function showPosition(position) {
         {lat: 46.322, lon: 14.146, address: 'Qlandia, Cesta 1. maja 77, 4000 Kranj'} // približno
     ];
 
-    // Dodaj markere za prodavnice
+    // Dodaj oznake za trgovine
     for (let i = 0; i < stores.length; i++) {
         L.marker([stores[i].lat, stores[i].lon], {icon: storeIcon}).addTo(map)
             .bindPopup('Swarovski - ' + stores[i].address);

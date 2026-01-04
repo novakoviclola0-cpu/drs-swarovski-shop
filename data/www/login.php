@@ -25,32 +25,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$user || !password_verify($geslo, $user['geslo'])) {
             $errors[] = "Napačen e-poštni naslov ali geslo.";
         } else {
+            // Preveri email verifikacijo (če stolpec obstaja)
+            if (isset($user['email_verified']) && $user['email_verified'] == 0) {
+                $errors[] = "Vaš e-poštni naslov še ni potrjen. Prosimo, preverite svojo e-pošto in kliknite na verifikacijsko povezavo.";
+            } else {
             $_SESSION['user_id']  = $user['id'];
             $_SESSION['ime']      = $user['ime'];
             $_SESSION['priimek']  = $user['priimek'];
             $_SESSION['email']    = $user['e_mail'];
             $_SESSION['tip_id']   = $user['tip_id'];
 
-            // Učitaj košaricu iz baze i spoji sa session košaricom
-            require __DIR__ . '/cart_functions.php';
-            if (!isset($_SESSION['cart'])) {
-                $_SESSION['cart'] = [];
-            }
-            $dbCart = loadCartFromDB($pdo, $user['id']);
-            // Spoji: prioritet ima baza, ali ako ima nešto u session, dodaj
-            foreach ($_SESSION['cart'] as $cartId => $qty) {
-                if (isset($dbCart[$cartId])) {
-                    $dbCart[$cartId] += $qty;
-                } else {
-                    $dbCart[$cartId] = $qty;
+                // Naloži košarico iz baze in spoji s session košarico
+                require __DIR__ . '/cart_functions.php';
+                if (!isset($_SESSION['cart'])) {
+                    $_SESSION['cart'] = [];
                 }
-            }
-            $_SESSION['cart'] = $dbCart;
-            // Sačuvaj spojenu košaricu u bazu
-            saveCartToDB($pdo, $user['id'], $dbCart);
+                $dbCart = loadCartFromDB($pdo, $user['id']);
+                // Spoji: prioriteta ima baza, vendar če je kaj v session, dodaj
+                foreach ($_SESSION['cart'] as $cartId => $qty) {
+                    if (isset($dbCart[$cartId])) {
+                        $dbCart[$cartId] += $qty;
+                    } else {
+                        $dbCart[$cartId] = $qty;
+                    }
+                }
+                $_SESSION['cart'] = $dbCart;
+                // Shrani spojeno košarico v bazo
+                saveCartToDB($pdo, $user['id'], $dbCart);
 
-            header("Location: index.php");
-            exit;
+                header("Location: index.php");
+                exit;
+            }
         }
     }
 }
@@ -88,6 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php if (isset($_SESSION['email']) && $_SESSION['email'] === 'admin@gmail.com'): ?>
                 <a href="admin_slike.php">Urejanje slik</a>
+                <a href="admin_statistika.php">Statistika</a>
+                <a href="admin_dodaj_izdelek.php">Dodaj izdelek</a>
+                <a href="admin_uporabniki.php">Uporabniki</a>
             <?php endif; ?>
 
             <?php if (!isset($_SESSION['user_id'])): ?>

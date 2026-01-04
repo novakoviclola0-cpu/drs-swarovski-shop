@@ -8,10 +8,10 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Ako je korisnik prijavljen, učitaj košaricu iz baze
+// Če je uporabnik prijavljen, naloži košarico iz baze
 if (isset($_SESSION['user_id'])) {
     $dbCart = loadCartFromDB($pdo, $_SESSION['user_id']);
-    // Spoji session i bazu (prioritet session)
+    // Spoji session in bazo (prioriteta ima session)
     foreach ($_SESSION['cart'] as $cartId => $qty) {
         $dbCart[$cartId] = $qty;
     }
@@ -295,7 +295,7 @@ if ($sort !== '')   $query_extra .= '&sort=' . urlencode($sort);
                 ?>
                 <a href="izdelek.php?id=<?= $p['id'] ?>">
                     <div class="product-box">
-                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($p['ime']) ?>">
+                        <img src="<?= htmlspecialchars($imgSrc) ?>" alt="<?= htmlspecialchars($p['ime']) ?>" loading="lazy" decoding="async">
                         <h3><?= htmlspecialchars($p['ime']) ?></h3>
                         <p class="price"><?= number_format($p['cena'], 2) ?> €</p>
                     </div>

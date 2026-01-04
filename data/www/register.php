@@ -40,21 +40,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         $hash = password_hash($geslo, PASSWORD_DEFAULT);
+        
+        // Generiraj verifikacijski token
+        $verificationToken = bin2hex(random_bytes(32));
+        
+        // Poskusi vstaviti uporabnika z verifikacijskim tokenom
+        try {
+            $ins = $pdo->prepare("
+                INSERT INTO oseba (ime, priimek, e_mail, geslo, tip_id, verification_token, email_verified)
+                VALUES (:ime, :priimek, :email, :geslo, 2, :token, 0)
+            ");
 
-        $ins = $pdo->prepare("
-            INSERT INTO oseba (ime, priimek, e_mail, geslo, tip_id)
-            VALUES (:ime, :priimek, :email, :geslo, 2)
-        ");
-
-        $ins->execute([
-            ':ime'     => $ime,
-            ':priimek' => $priimek,
-            ':email'   => $email,
-            ':geslo'   => $hash
-        ]);
-
-        header("Location: login.php?registered=1");
-        exit;
+            $ins->execute([
+                ':ime'     => $ime,
+                ':priimek' => $priimek,
+                ':email'   => $email,
+                ':geslo'   => $hash,
+                ':token'   => $verificationToken
+            ]);
+            
+            // Pošlji verifikacijski email
+            $verifyUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") 
+                        . "://" . $_SERVER['HTTP_HOST'] 
+                        . dirname($_SERVER['PHP_SELF']) 
+                        . "/verify_email.php?token=" . $verificationToken;
+            
+            $subject = "Potrditev e-poštnega naslova - Swarovski";
+            $message = "Pozdravljeni " . htmlspecialchars($ime) . ",\n\n";
+            $message .= "Hvala za registracijo! Prosimo, potrdite vaš e-poštni naslov s klikom na spodnjo povezavo:\n\n";
+            $message .= $verifyUrl . "\n\n";
+            $message .= "Če niste zahtevali ta račun, lahko to sporočilo prezrete.\n\n";
+            $message .= "Lep pozdrav,\nEkipa Swarovski";
+            
+            $headers = "From: noreply@swarovski.si\r\n";
+            $headers .= "Reply-To: noreply@swarovski.si\r\n";
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+            
+            @mail($email, $subject, $message, $headers);
+            
+            $_SESSION['registration_success'] = true;
+            $_SESSION['registration_email'] = $email;
+            header("Location: register.php?success=1");
+            exit;
+        } catch (PDOException $e) {
+            // Preveri, ali je napaka zaradi že obstoječega emaila
+            if ($e->getCode() == 23000) {
+                $errors[] = "Uporabnik s tem e-poštnim naslovom že obstaja.";
+            } else {
+                $errors[] = "Napaka pri registraciji. Poskusite znova.";
+            }
+        }
     }
 }
 ?>
@@ -79,6 +114,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php if (isset($_SESSION['email']) && $_SESSION['email'] === 'admin@gmail.com'): ?>
                 <a href="admin_slike.php">Urejanje slik</a>
+                <a href="admin_statistika.php">Statistika</a>
+                <a href="admin_dodaj_izdelek.php">Dodaj izdelek</a>
+                <a href="admin_uporabniki.php">Uporabniki</a>
             <?php endif; ?>
 
             <?php if (!isset($_SESSION['user_id'])): ?>
@@ -97,6 +135,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="form-container">
     <div class="form-box">
         <h2>Registracija</h2>
+
+        <?php if (isset($_GET['success']) && $_GET['success'] == '1'): ?>
+            <div class="success-msg" style="background: #e6f4ea; border: 1px solid #a3d3b2; color: #265e33; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                <p><strong>Registracija uspešna!</strong></p>
+                <p>Na vaš e-poštni naslov smo vam poslali povezavo za potrditev. Prosimo, preverite svojo e-pošto in kliknite na povezavo, da aktivirate vaš račun.</p>
+            </div>
+        <?php endif; ?>
 
         <?php if (!empty($errors)): ?>
             <div class="error-msg">

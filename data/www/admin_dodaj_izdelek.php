@@ -27,7 +27,7 @@ if (!$isAdmin) {
 $successMsg = "";
 $errorMsg = "";
 
-// Tipovi izdelkov (hardkodovani, kao u izdelek.php)
+// Tipi izdelkov (trdo kodirani, kot v izdelek.php)
 $tipNazivi = [
     1 => 'Ogrlica',
     2 => 'Prstan',

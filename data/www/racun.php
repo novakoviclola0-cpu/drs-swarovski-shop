@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '/db.php';
 
-// Proveri da li postoji račun u session
+// Preveri, ali obstaja račun v session
 if (!isset($_SESSION['checkout_items']) || empty($_SESSION['checkout_items'])) {
     header("Location: kosarica.php");
     exit;
@@ -14,16 +14,16 @@ $discountAmount = $_SESSION['checkout_discount'] ?? 0;
 $grandTotal = $_SESSION['checkout_grand_total'];
 $discountPercent = $_SESSION['checkout_discount_percent'] ?? 0;
 
-// Generiši jedinstveni ID računa
+// Generiraj edinstveni ID računa
 $racunId = 'RAC-' . date('Ymd') . '-' . strtoupper(substr(md5(time() . $_SESSION['user_id']), 0, 8));
 $datum = date('d.m.Y H:i');
 
-// Podaci za QR kod (kao string)
+// Podatki za QR kod (kot niz)
 $qrData = "RACUN:" . $racunId . "|DATUM:" . $datum . "|IZNOS:" . number_format($grandTotal, 2) . "EUR|KUPAC:" . $_SESSION['ime'] . " " . $_SESSION['priimek'];
 
 $pdfRequested = isset($_GET['pdf']) && $_GET['pdf'] == '1';
 
-// Ako je tražen PDF, preusmeri na PDF generisanje
+// Če je zahtevan PDF, preusmeri na generiranje PDF
 if ($pdfRequested) {
     header("Location: racun_pdf.php");
     exit;
@@ -132,14 +132,25 @@ if ($pdfRequested) {
         <h1 class="logo-title">Swarovski</h1>
         <nav class="right-menu">
             <a href="index.php">Domov</a>
-            <a href="kosarica.php">Košarica</a>
-            <?php if (isset($_SESSION['user_id'])): ?>
+            <a href="kosarica.php">
+                Košarica<?= isset($_SESSION['cart']) && array_sum($_SESSION['cart']) > 0 ? " (" . array_sum($_SESSION['cart']) . ")" : "" ?>
+            </a>
+
+            <?php if (isset($_SESSION['email']) && $_SESSION['email'] === 'admin@gmail.com'): ?>
+                <a href="admin_slike.php">Urejanje slik</a>
+                <a href="admin_statistika.php">Statistika</a>
+                <a href="admin_dodaj_izdelek.php">Dodaj izdelek</a>
+                <a href="admin_uporabniki.php">Uporabniki</a>
+            <?php endif; ?>
+
+            <?php if (!isset($_SESSION['user_id'])): ?>
+                <a href="login.php">Prijava</a>
+            <?php else: ?>
                 <a href="logout.php" class="logout-btn">
                     Odjava (<?= htmlspecialchars($_SESSION['ime']) ?>)
                 </a>
-            <?php else: ?>
-                <a href="login.php">Prijava</a>
             <?php endif; ?>
+
             <a href="about.php">O nas</a>
         </nav>
     </div>
@@ -153,7 +164,7 @@ if ($pdfRequested) {
         </div>
 
         <div class="racun-info">
-            <p><strong>Broj računa:</strong> <?= htmlspecialchars($racunId) ?></p>
+            <p><strong>Številka računa:</strong> <?= htmlspecialchars($racunId) ?></p>
             <p><strong>Datum:</strong> <?= htmlspecialchars($datum) ?></p>
             <p><strong>Kupac:</strong> <?= htmlspecialchars($_SESSION['ime'] . ' ' . $_SESSION['priimek']) ?></p>
         </div>
@@ -165,7 +176,7 @@ if ($pdfRequested) {
                         <th>Izdelek</th>
                         <th>Količina</th>
                         <th>Cena</th>
-                        <th>Ukupno</th>
+                        <th>Skupaj</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -215,7 +226,7 @@ if ($pdfRequested) {
     }
 })();
 
-// Generiši QR kod
+// Generiraj QR kod
 const qrData = <?= json_encode($qrData) ?>;
 new QRCode(document.getElementById("qrcode"), {
     text: qrData,

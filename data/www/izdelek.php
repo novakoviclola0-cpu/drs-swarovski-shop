@@ -14,10 +14,10 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
 
-// Ako je korisnik prijavljen, učitaj košaricu iz baze
+// Če je uporabnik prijavljen, naloži košarico iz baze
 if (isset($_SESSION['user_id'])) {
     $dbCart = loadCartFromDB($pdo, $_SESSION['user_id']);
-    // Spoji session i bazu (prioritet session)
+    // Spoji session in bazo (prioriteta ima session)
     foreach ($_SESSION['cart'] as $cartId => $qty) {
         $dbCart[$cartId] = $qty;
     }
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             }
             $_SESSION['cart'][$pid]++;
 
-            // Sačuvaj u bazu
+            // Shrani v bazo
             saveCartToDB($pdo, $_SESSION['user_id'], $_SESSION['cart']);
 
             $cartMessage = "Izdelek je bil dodan v košarico.";
@@ -498,6 +498,9 @@ $comments = $comments_stmt->fetchAll();
 
             <?php if (isset($_SESSION['email']) && $_SESSION['email'] === 'admin@gmail.com'): ?>
                 <a href="admin_slike.php">Urejanje slik</a>
+                <a href="admin_statistika.php">Statistika</a>
+                <a href="admin_dodaj_izdelek.php">Dodaj izdelek</a>
+                <a href="admin_uporabniki.php">Uporabniki</a>
             <?php endif; ?>
 
             <?php if (!isset($_SESSION['user_id'])): ?>
@@ -523,7 +526,8 @@ $comments = $comments_stmt->fetchAll();
         : 'images/' . $izdelek['id'] . '.jpg';
 ?>
 <img src="<?= htmlspecialchars($imgSrc) ?>"
-     alt="<?= htmlspecialchars($izdelek['ime']) ?>">
+     alt="<?= htmlspecialchars($izdelek['ime']) ?>"
+     loading="lazy" decoding="async">
 
         </div>
 
